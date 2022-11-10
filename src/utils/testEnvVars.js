@@ -1,0 +1,3 @@
+process.env = {
+    STOREFRONT: 'testStoreFront'
+};
