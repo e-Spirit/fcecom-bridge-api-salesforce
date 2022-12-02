@@ -24,9 +24,11 @@ function responseLogger(response) {
     return response;
 }
 
-function errorLogger(error) {
+function errorHandler(error) {
     const { message, response } = error;
     lastError = error;
+    const data = response?.data || message;
+    const status = response?.status || 500;
     if (response) {
         logger.logError(
             ` ↳ ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status} ${response.statusText}\n   ${message}`
@@ -34,20 +36,20 @@ function errorLogger(error) {
     } else {
         logger.logError(` ↳ ${message}`);
     }
-    return error.response;
+    return Promise.reject({ error: true, data, status });
 }
 
 let lastError;
 
 const shopApiPath = `${BASE_URL}${STOREFRONT}/dw/shop/${OCAPI_VERSION}`;
 const shopClient = axios.create({ baseURL: shopApiPath, params: { client_id: CLIENT_ID } });
-shopClient.interceptors.response.use(responseLogger, errorLogger);
+shopClient.interceptors.response.use(responseLogger, errorHandler);
 
 const dataApiPath = `${BASE_URL}-/dw/data/${OCAPI_VERSION}`;
 const dataClient = axios.create({ baseURL: dataApiPath });
 
 dataClient.interceptors.request.use(AuthenticationInterceptor(getOwnerCredentials));
-dataClient.interceptors.response.use(responseLogger, errorLogger);
+dataClient.interceptors.response.use(responseLogger, errorHandler);
 
 module.exports = {
     shopClient,

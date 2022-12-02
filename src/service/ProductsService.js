@@ -27,12 +27,11 @@ const productsGet = async (categoryId, keyword, lang, page = 1) => {
     if (categoryId) {
         params.refine = 'cgid=' + categoryId;
     }
-    console.log(params)
     const { data, status } = await shopClient.get(`/product_search`, { params });
 
     const hasNext = Boolean(data.next);
     const total = data.total;
-    const products = data.hits.map((product) => {
+    const products = data.hits?.map((product) => {
         return {
             extract: product.product_name,
             id: product.product_id,
@@ -40,7 +39,7 @@ const productsGet = async (categoryId, keyword, lang, page = 1) => {
             label: product.product_name,
             thumbnail: product.image?.link
         };
-    });
+    }) || [];
 
     return { products, total, hasNext, responseStatus: status };
 };
@@ -62,7 +61,7 @@ const productsProductIdsGet = async (productIds, lang) => {
     }
 
     const { data } = await shopClient.get(`/products/(${productIds.join(',')})`, { params });
-    const products = data.data.map((product) => {
+    const products = data.data?.map((product) => {
         const thumbnail = product.image_groups.find((imageGroup) => imageGroup.view_type === 'small');
         const image = product.image_groups.find((imageGroup) => imageGroup.view_type === 'large');
         return {
@@ -72,7 +71,7 @@ const productsProductIdsGet = async (productIds, lang) => {
             label: product.name,
             thumbnail: thumbnail?.images[0].link
         };
-    });
+    }) || [];
 
     return { products };
 };
