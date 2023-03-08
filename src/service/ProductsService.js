@@ -1,6 +1,8 @@
 const { shopClient } = require('../utils/http-client');
 const languageMap = require('../resources/LanguageMap.json');
+const logger = require('../utils/logger');
 
+const LOGGING_NAME = 'ProductsService';
 
 /**
  * This method fetches all products and transforms them into the internal model.
@@ -27,19 +29,23 @@ const productsGet = async (categoryId, keyword, lang, page = 1) => {
     if (categoryId) {
         params.refine = 'cgid=' + categoryId;
     }
+
+    logger.logDebug(LOGGING_NAME, `Performing GET request to /product_search with body ${JSON.stringify({ params })}`);
+
     const { data, status } = await shopClient.get(`/product_search`, { params });
 
     const hasNext = Boolean(data.next);
     const total = data.total;
-    const products = data.hits?.map((product) => {
-        return {
-            extract: product.product_name,
-            id: product.product_id,
-            image: product.image?.link,
-            label: product.product_name,
-            thumbnail: product.image?.link
-        };
-    }) || [];
+    const products =
+        data.hits?.map((product) => {
+            return {
+                extract: product.product_name,
+                id: product.product_id,
+                image: product.image?.link,
+                label: product.product_name,
+                thumbnail: product.image?.link
+            };
+        }) || [];
 
     return { products, total, hasNext, responseStatus: status };
 };
@@ -60,18 +66,24 @@ const productsProductIdsGet = async (productIds, lang) => {
         params.locale = languageMap[lang];
     }
 
-    const { data } = await shopClient.get(`/products/(${productIds.join(',')})`, { params });
-    const products = data.data?.map((product) => {
-        const thumbnail = product.image_groups.find((imageGroup) => imageGroup.view_type === 'small');
-        const image = product.image_groups.find((imageGroup) => imageGroup.view_type === 'large');
-        return {
-            extract: product.short_description,
-            id: product.id,
-            image: image?.images[0].link,
-            label: product.name,
-            thumbnail: thumbnail?.images[0].link
-        };
-    }) || [];
+    const path = `/products/(${productIds.join(',')})`;
+
+    logger.logDebug(LOGGING_NAME, `Performing GET request to ${path} with body ${JSON.stringify({ params })}`);
+
+    const { data } = await shopClient.get(path, { params });
+
+    const products =
+        data.data?.map((product) => {
+            const thumbnail = product.image_groups.find((imageGroup) => imageGroup.view_type === 'small');
+            const image = product.image_groups.find((imageGroup) => imageGroup.view_type === 'large');
+            return {
+                extract: product.short_description,
+                id: product.id,
+                image: image?.images[0].link,
+                label: product.name,
+                thumbnail: thumbnail?.images[0].link
+            };
+        }) || [];
 
     return { products };
 };

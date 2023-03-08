@@ -3,6 +3,8 @@ const oauth = require('axios-oauth-client');
 const tokenInterceptor = require('axios-token-interceptor');
 const logger = require('./logger');
 
+const LOGGING_NAME = 'http-client';
+
 const { BASE_URL, STOREFRONT, OCAPI_VERSION, CLIENT_ID, CLIENT_SECRET, OAUTH_URL } = process.env;
 const getOwnerCredentials = oauth.clientCredentials(axios.create(), OAUTH_URL, CLIENT_ID, CLIENT_SECRET);
 
@@ -20,7 +22,10 @@ function AuthenticationInterceptor(authenticate) {
 }
 
 function responseLogger(response) {
-    logger.logInfo(` ↳ ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status} ${response.statusText}`);
+    logger.logInfo(
+        LOGGING_NAME,
+        `↳ Received response ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status} ${response.statusText}`
+    );
     return response;
 }
 
@@ -31,10 +36,13 @@ function errorHandler(error) {
     const status = response?.status || 500;
     if (response) {
         logger.logError(
-            ` ↳ ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status} ${response.statusText}\n   ${message}`
+            LOGGING_NAME,
+            `↳ Received response ${response.config.method.toUpperCase()} ${response.config.url} - ${response.status} ${
+                response.statusText
+            } ${message}`
         );
     } else {
-        logger.logError(` ↳ ${message}`);
+        logger.logError(LOGGING_NAME, `↳ ${message}`);
     }
     return Promise.reject({ error: true, data, status });
 }

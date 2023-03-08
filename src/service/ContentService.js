@@ -1,6 +1,8 @@
 const { shopClient } = require('../utils/http-client');
 const languageMap = require('../resources/LanguageMap.json');
+const logger = require('../utils/logger');
 
+const LOGGING_NAME = 'ContentService';
 
 /**
  * This method returns the content pages with the given IDs.
@@ -15,8 +17,11 @@ const contentContentIdsGet = async (contentIds, lang) => {
     if (lang && languageMap[lang]) {
         params.locale = languageMap[lang];
     }
+    const path = `/content/(${contentIds.join(',')})`;
 
-    const { data, status } = await shopClient.get(`/content/(${contentIds.join(',')})`, { params });
+    logger.logDebug(LOGGING_NAME, `Performing GET request to ${path} with body ${JSON.stringify({ params })}`);
+
+    const { data, status } = await shopClient.get(path, { params });
     const content = data.data.map((contentPage) => {
         return {
             id: contentPage.id,
@@ -47,16 +52,19 @@ const contentGet = async (query, lang, page = 1) => {
         params.locale = languageMap[lang];
     }
 
+    logger.logDebug(LOGGING_NAME, `Performing GET request to /content_search with body ${JSON.stringify({ params })}`);
+
     const { data, status } = await shopClient.get(`/content_search`, { params });
     const hasNext = Boolean(data.next);
     const total = data.total;
-    const content = data.hits.map((contentPage) => {
-        return {
-            id: contentPage.id,
-            label: contentPage.name,
-            extract: contentPage.description
-        };
-    });
+    const content =
+        data?.hits?.map((contentPage) => {
+            return {
+                id: contentPage.id,
+                label: contentPage.name,
+                extract: contentPage.description
+            };
+        }) || [];
 
     return { content, total, hasNext, responseStatus: status };
 };

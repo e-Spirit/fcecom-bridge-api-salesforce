@@ -1,8 +1,9 @@
 const { dataClient, shopClient } = require('../utils/http-client');
-const logger = require('../utils/logger');
 const { STOREFRONT } = process.env;
 const languageMap = require('../resources/LanguageMap.json');
+const logger = require('../utils/logger');
 
+const LOGGING_NAME = 'CategoriesService';
 
 const pageSize = 100;
 
@@ -55,20 +56,28 @@ const fetchCategories = async (lang, page = 1, fetchAllCategories = false) => {
 
     const catalogSelect = '(count,expand,next,previous,select,start,total,data.(id,assigned_sites.(id)))';
     const catalogParams = { ...commonParams, select: catalogSelect };
+
+    logger.logDebug(LOGGING_NAME, `Performing GET request to /catalogs with body ${JSON.stringify({ params: catalogParams })}`);
+
     const { data: catalogData } = await dataClient.get(`/catalogs`, { params: catalogParams });
     const catalog = catalogData.data?.find((catalogIterator) => catalogIterator.assigned_sites?.some((site) => site.id === STOREFRONT));
 
     const categoriesUrl = `/catalogs/${catalog.id}/categories`;
     const categorySelect = '(count,next,previous,select,start,total,data.(id,name,parent_category_id))';
     const categoryParams = { ...commonParams, select: categorySelect };
+
+    logger.logDebug(LOGGING_NAME, `Performing GET request to ${categoriesUrl} with body ${JSON.stringify({ params: categoryParams })}`);
+
     let categories = await dataClient.get(categoriesUrl, { params: categoryParams });
     if (fetchAllCategories && categories.data.next) {
         categoryParams.count = categories.total;
+
+        logger.logDebug(LOGGING_NAME, `Performing GET request to ${categoriesUrl} with body ${JSON.stringify({ params: categoryParams })}`);
+
         categories = await dataClient.get(categoriesUrl, { params: categoryParams });
     }
     return categories;
 };
-
 
 /**
  * This method checks if the Parameter is a truthy value.
@@ -77,11 +86,11 @@ const fetchCategories = async (lang, page = 1, fetchAllCategories = false) => {
  * @return {boolean} if the value is truthy
  */
 const checkIfEmpty = (value) => {
-    if (value === "") {
+    if (value === '') {
         value = undefined;
     }
     return Boolean(value);
-}
+};
 
 /**
  * This method fetches all categories and returns them as a flat list structure.
@@ -127,14 +136,18 @@ const categoriesCategoryIdsGet = async (categoryIds, lang) => {
     if (lang && languageMap[lang]) {
         params.locale = languageMap[lang];
     }
+    const path = `/categories/(${categoryIds.join(',')})`;
 
-    let { data, status } = await shopClient.get(`/categories/(${categoryIds.join(',')})`, { params });
-    data = data.data.map((category) => {
-        return {
-            id: category.id,
-            label: category.name
-        };
-    });
+    logger.logDebug(LOGGING_NAME, `Performing GET request to ${path} with body ${JSON.stringify({ params })}`);
+
+    let { data, status } = await shopClient.get(path, { params });
+    data =
+        data?.data?.map((category) => {
+            return {
+                id: category.id,
+                label: category.name
+            };
+        }) || [];
 
     return { categories: data, responseStatus: status };
 };
@@ -148,7 +161,6 @@ const categoriesCategoryIdsGet = async (categoryIds, lang) => {
  * @return Promise<{ hasNext: boolean, total: number, categories: any[]}> The category tree.
  */
 const categoryTreeGet = async (parentId = 'root', lang) => {
-    console.log("get Tree")
     const { data: categoryData } = await fetchCategories(lang, 1, true);
 
     const categories = mapCategoryData(categoryData.data, lang);
