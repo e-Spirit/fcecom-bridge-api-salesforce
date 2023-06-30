@@ -19,7 +19,7 @@ Lean more about their API [here](https://documentation.b2c.commercecloud.salesfo
 
 
 ## Prerequisites
-- Server running node 14 or later
+- Server running node 18 or later
 - Salesforce Commerce Cloud instance
 - Access to the [Salesforce OCAPI](https://documentation.b2c.commercecloud.salesforce.com/DOC2/index.jsp?topic=%2Fcom.demandware.dochelp%2FOCAPI%2Fcurrent%2Fusage%2FOpenCommerceAPI.html)
 
