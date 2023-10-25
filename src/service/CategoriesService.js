@@ -11,7 +11,7 @@ const mapCategoryData = (categoryData, lang) => {
     return categoryData.map((category) => {
         return {
             id: category.id,
-            label: category.name?.[languageMap[lang.toUpperCase()]] ?? category.name?.default,
+            label: category.name?.[languageMap[lang]] ?? category.name?.default,
             parentId: category.parent_category_id
         };
     });
