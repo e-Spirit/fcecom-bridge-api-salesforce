@@ -38,6 +38,22 @@ describe('CategoriesService', () => {
         });
     });
 
+    describe('categoryTreeGet', () => {
+        it('returns the categories as tree (with parent ID)', async () => {
+            dataClient.get.mockResolvedValueOnce({ data: data.catalogsGet }).mockResolvedValue({ data: data.categoriesGet });
+
+            const result = await service.categoryTreeGet('root');
+
+            expect(result.categorytree[0].id).toEqual('gift-certificates');
+            expect(result.categorytree[1].id).toEqual('hidden');
+            expect(result.categorytree[1].children[0].id).toEqual('sale');
+            expect(result.categorytree[1].children[0].children[0].id).toEqual('sale-mens');
+            expect(result.categorytree[1].children[0].children[1].id).toEqual('sale-womens');
+            expect(result.categorytree[1].children[0].children[0].children[0].id).toEqual('sale-mens-accessories');
+            expect(result.categorytree[1].children[0].children[0].children[1].id).toEqual('sale-mens-clothing');
+        });
+    });
+
     describe('categoriesGet', () => {
         it('returns the categories as list', async () => {
             dataClient.get.mockResolvedValueOnce({ data: data.catalogsGet }).mockResolvedValue({ data: data.categoriesGet });

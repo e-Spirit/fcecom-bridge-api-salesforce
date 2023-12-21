@@ -1,3 +1,8 @@
+## [2.2.3](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.2.2...v2.2.3) (2023-12-21)
+
+### Changes
+* Removed unnecessary data from test files.
+
 ## [2.2.2](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.2.1...v2.2.2) (2023-12-20)
 
 ### Changes

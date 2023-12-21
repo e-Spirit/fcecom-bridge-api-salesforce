@@ -22,6 +22,7 @@ describe('ProductsService', () => {
                 expect(product.id).toEqual(data.fetchProducts.hits[index].product_id);
                 expect(product.label).toEqual(data.fetchProducts.hits[index].product_name);
                 expect(product.extract).toEqual(data.fetchProducts.hits[index].product_name);
+                expect(product.image).toEqual(data.fetchProducts.hits[index].image.link);
             });
             expect(result.total).toEqual(data.fetchProducts.total);
             expect(result.hasNext).toEqual(Boolean(data.fetchProducts.next));
