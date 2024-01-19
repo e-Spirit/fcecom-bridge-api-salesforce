@@ -1,3 +1,8 @@
+## [2.3.0](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.2.3...v2.3.0) (2024-01-19)
+
+### Changes
+* Added template for multi-tenant support with Docker Compose.
+
 ## [2.2.3](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.2.2...v2.2.3) (2023-12-21)
 
 ### Changes

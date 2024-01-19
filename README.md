@@ -37,23 +37,23 @@ Due to OCAPI API restrictions, the following endpoints are not implemented in th
 ### Configuration
 The configuration is done by copying the `.env.template` file in the root directory to a `.env` file and editing it.
 
-| Param                   | Description                                                                                                      |
-|-------------------------|------------------------------------------------------------------------------------------------------------------|
-| PORT                    | The port on which the bridge is started.                                                                         |
-| BRIDGE_AUTH_USERNAME    | The username to access the bridge's API.                                                                         |
-| BRIDGE_AUTH_PASSWORD    | The password to access the bridge's API.                                                                         |
-| LOG_LEVEL               | The log level to be used within the Logger and the commons (for possible log levels see [link](https://github.com/e-Spirit/fcecom-bridge-commons/blob/main/README.md)) |
-| CONN_MODE               | Either HTTP or HTTPS.                                                                                            |
-| SSL_CERT                | Path to the certificate file to use when using HTTPS.                                                            |
-| SSL_KEY                 | Path to the private key file to use when using HTTPS.                                                            |
-| OAUTH_URL               | The Url where the Oauth token can be retrieved from Salesforce Commerce                                          |
-| BASE_URL                | The Base URL of the Salesforce Commerce Server (the URL up to the site part)                                     |
-| STOREFRONT              | The Id of the Salesforce Site as referred in the URL                                                             |
-| OCAPI_VERSION           | The version of the OCAPI to be used by the bridge                                                                |
-| CLIENT_ID               | The Username to authenticate to Salesforce Commerce Cloud                                                        |
-| CLIENT_SECRET           | The Password to authenticate to Salesforce Commerce Cloud                                                        |
-| BRIDGE_AUTH_USERNAME    | The Username used to identify to the Bridge (Basic Auth)                                                         |
-| BRIDGE_AUTH_PASSWORD    | The Password used to identify to the Bridge (Basic Auth)                                                         |
+| Param                | Description                                                                                                                                                            |
+|----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| PORT                 | The port on which the bridge is started.                                                                                                                               |
+| BRIDGE_AUTH_USERNAME | The username to access the bridge's API.                                                                                                                               |
+| BRIDGE_AUTH_PASSWORD | The password to access the bridge's API.                                                                                                                               |
+| LOG_LEVEL            | The log level to be used within the Logger and the commons (for possible log levels see [link](https://github.com/e-Spirit/fcecom-bridge-commons/blob/main/README.md)) |
+| CONN_MODE            | Either HTTP or HTTPS.                                                                                                                                                  |
+| SSL_CERT             | Path to the certificate file to use when using HTTPS.                                                                                                                  |
+| SSL_KEY              | Path to the private key file to use when using HTTPS.                                                                                                                  |
+| OAUTH_URL            | The Url where the Oauth token can be retrieved from Salesforce Commerce                                                                                                |
+| BASE_URL             | The Base URL of the Salesforce Commerce Server (the URL up to the site part)                                                                                           |
+| STOREFRONT           | The Id of the Salesforce Site as referred in the URL                                                                                                                   |
+| OCAPI_VERSION        | The version of the OCAPI to be used by the bridge                                                                                                                      |
+| CLIENT_ID            | The Username to authenticate to Salesforce Commerce Cloud                                                                                                              |
+| CLIENT_SECRET        | The Password to authenticate to Salesforce Commerce Cloud                                                                                                              |
+| BRIDGE_AUTH_USERNAME | The Username used to identify to the Bridge (Basic Auth)                                                                                                               |
+| BRIDGE_AUTH_PASSWORD | The Password used to identify to the Bridge (Basic Auth)                                                                                                               |
 
 #### Configure Language Mapping
 For mapping FirstSpirit languages to Salesforce Commerce Cloud locales, this bridge uses a simple .json file found at 'src/resources/LanguageMap.json'.
@@ -84,7 +84,32 @@ npm run start:watch
 Open http://localhost:3000/docs in your browser to display the bridge's interactive API documentation.
 
 ### Configure FirstSpirit Module
-In order to enable the Connect for Commerce FirstSpirit Module to communicate with the bridge, you have to configure it. Please refer to [the documentation](https://docs.e-spirit.com/ecom/fsconnect-com/FirstSpirit_Connect_for_Commerce_Documentation_EN.html#install_pcomp) to learn how to achive this. 
+In order to enable the Connect for Commerce FirstSpirit Module to communicate with the bridge, you have to configure it. Please refer to [the documentation](https://docs.e-spirit.com/ecom/fsconnect-com/FirstSpirit_Connect_for_Commerce_Documentation_EN.html#install_pcomp) to learn how to achive this.
+
+### Multi-Tenant Support
+We provide an example `Dockerfile` and `docker-compose.yml` to enable multi-tenant support for this service.
+
+Build and tag the Docker image with a custom name and version:
+```docker
+docker build -t <IMAGE_NAME>:<VERSION> .
+```
+
+The `docker-compose.yml` demonstrates how to define multiple instances of the bridge with a different configuration.
+
+Replace `<IMAGE_NAME>:<VERSION>` with the name and tag that you chose for your Docker image.
+Each configuration for an instance is set with a different `.env.*` file. The path to it needs to be defined under `env_file`.
+
+Start the containers:
+```docker
+docker compose up -d
+```
+
+Stop the containers:
+```docker
+docker compose down
+```
+
+Please be aware that the Docker containers need to be accessible from your FirstSpirit instance in order to work with the Connect for Commerce module. A deployment to a Cloud provider might be necessary for this.
 
 ## Legal Notices
 The FirstSpirit Connect for Commerce Salesforce Commerce Cloud bridge is a product of [Crownpeak Technology GmbH](https://www.crownpeak.com), Dortmund, Germany. The FirstSpirit Connect for Commerce Salesforce Commerce Cloud bridge is subject to the Apache-2.0 license.
