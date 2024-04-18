@@ -1,6 +1,7 @@
 const { shopClient } = require('../utils/http-client');
 const languageMap = require('../resources/LanguageMap.json');
 const logger = require('../utils/logger');
+const { ParameterValidationError } = require('fcecom-bridge-commons')
 
 const LOGGING_NAME = 'ContentService';
 
@@ -45,12 +46,11 @@ const contentContentIdsGet = async (contentIds, lang) => {
 const contentGet = async (query, lang, page = 1) => {
     const pageSize = 100;
     const params = { count: pageSize, start: (page - 1) * pageSize };
-    if (query) {
-        params.q = query;
-    }
-    if (lang && languageMap[lang]) {
-        params.locale = languageMap[lang];
-    }
+
+    if (query) params.q = query
+    else throw new ParameterValidationError(`Mandatory parameter 'query' not provided.`);
+
+    if (lang && languageMap[lang]) params.locale = languageMap[lang];
 
     logger.logDebug(LOGGING_NAME, `Performing GET request to /content_search with body ${JSON.stringify({ params })}`);
 

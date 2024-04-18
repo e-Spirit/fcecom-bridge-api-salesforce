@@ -19,6 +19,22 @@ describe('ContentService', () => {
             expect(result.total).toEqual(data.contentPagesGet.total);
             expect(result.hasNext).toEqual(Boolean(data.contentPagesGet.next));
         });
+        it('should throw an error if mandatory parameter "query" is not provided', async () => {
+            // null
+            await expect(async () => {
+                await service.contentGet(null, 'EN');
+            }).rejects.toThrow(`Mandatory parameter 'query' not provided.`);
+
+            // undefined
+            await expect(async () => {
+                await service.contentGet(undefined, 'EN');
+            }).rejects.toThrow(`Mandatory parameter 'query' not provided.`);
+
+            // empty string
+            await expect(async () => {
+                await service.contentGet('', 'EN');
+            }).rejects.toThrow(`Mandatory parameter 'query' not provided.`);
+        });
     });
     describe('contentContentIdsGet', () => {
         it('should fetch specific content Pages by Id', async () => {
