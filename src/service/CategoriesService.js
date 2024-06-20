@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 
 const LOGGING_NAME = 'CategoriesService';
 
-const pageSize = 100;
+const pageSize = 20;
 
 const mapCategoryData = (categoryData, lang) => {
     return categoryData.map((category) => {
@@ -48,8 +48,10 @@ const flattenCategories = (categories) => {
     }, []);
 };
 
-const fetchCategories = async (lang, page = 1, fetchAllCategories = false) => {
-    const commonParams = { count: pageSize, start: (Number(page) - 1) * pageSize };
+const fetchCategories = async (lang, page = 1) => {
+    // Use default index of 0 for start parameter.
+    const commonParams = { count: pageSize };
+
     if (lang && languageMap[lang]) {
         commonParams.locale = languageMap[lang];
     }
@@ -69,13 +71,13 @@ const fetchCategories = async (lang, page = 1, fetchAllCategories = false) => {
     logger.logDebug(LOGGING_NAME, `Performing GET request to ${categoriesUrl} with body ${JSON.stringify({ params: categoryParams })}`);
 
     let categories = await dataClient.get(categoriesUrl, { params: categoryParams });
-    if (fetchAllCategories && categories.data.next) {
-        categoryParams.count = categories.total;
 
-        logger.logDebug(LOGGING_NAME, `Performing GET request to ${categoriesUrl} with body ${JSON.stringify({ params: categoryParams })}`);
+    categoryParams.count = categories.data.total;
 
-        categories = await dataClient.get(categoriesUrl, { params: categoryParams });
-    }
+    logger.logDebug(LOGGING_NAME, `Performing GET request to ${categoriesUrl} with body ${JSON.stringify({ params: categoryParams })}`);
+
+    categories = await dataClient.get(categoriesUrl, { params: categoryParams });
+
     return categories;
 };
 
@@ -93,33 +95,46 @@ const checkIfEmpty = (value) => {
 };
 
 /**
+ * This method filters categories by their label based on the given keyword.
+ * @param {string} keyword Keyword to filter the categories by.
+ * @param {any[]} categories Categories to filter.
+ * @return {any[]} Filtered categories.
+ */
+const filterCategories = (keyword, categories) => {
+    const query = keyword.toLowerCase();
+    return categories.filter(category => category.label?.toLowerCase().includes(query));
+}
+
+/**
  * This method fetches all categories and returns them as a flat list structure.
  * @see SwaggerUI {@link http://localhost:3000/api/#/categories/get_categories}
  *
  * @param {string} [parentId] ID of the parent category to filter categories by.
+ * @param {string} [keyword] Keyword to filter the categories by.
  * @param {string} [lang] Language of the request.
  * @param {number} [page=1] Number of the page to retrieve.
  * @return Promise<{ hasNext: boolean, total: number, categories: any[]}> The category tree.
  */
-const categoriesGet = async (parentId, lang, page = 1) => {
+const categoriesGet = async (parentId, keyword, lang, page = 1) => {
     const selfPaginate = checkIfEmpty(parentId);
 
-    const { data: categoryData } = await fetchCategories(lang, page, selfPaginate);
+    const { data: categoryData } = await fetchCategories(lang, page);
 
     const mappedData = mapCategoryData(categoryData.data, lang);
     const tree = buildCategoryTree(mappedData, selfPaginate ? parentId : undefined);
-
+    
     let categories = flattenCategories(tree);
-
-    let total = categoryData.total;
-    let hasNext = Boolean(categoryData.next);
-    if (selfPaginate) {
-        total = categories.length;
-        hasNext = page * pageSize <= total;
-        const start = pageSize * (page - 1);
-        const end = pageSize * page;
-        categories = categories.slice(start, end);
+    
+    if (keyword) {
+        categories = filterCategories(keyword, categories);
     }
+
+    // Pagination
+    const total = categories.length;
+    const hasNext = page * pageSize <= total;
+    const start = pageSize * (page - 1);
+    const end = pageSize * page;
+    categories = categories.slice(start, end);
 
     return { categories, total, hasNext };
 };
@@ -161,7 +176,7 @@ const categoriesCategoryIdsGet = async (categoryIds, lang) => {
  * @return Promise<{ hasNext: boolean, total: number, categories: any[]}> The category tree.
  */
 const categoryTreeGet = async (parentId = 'root', lang) => {
-    const { data: categoryData } = await fetchCategories(lang, 1, true);
+    const { data: categoryData } = await fetchCategories(lang, 1);
 
     const categories = mapCategoryData(categoryData.data, lang);
 

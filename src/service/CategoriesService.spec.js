@@ -9,7 +9,7 @@ describe('CategoriesService', () => {
         it('returns the categories as list', async () => {
             dataClient.get.mockResolvedValueOnce({ data: data.catalogsGet }).mockResolvedValue({ data: data.categoriesGet });
 
-            const result = await service.categoriesGet('root', 'EN', 1);
+            const result = await service.categoriesGet(undefined, undefined, 'EN', 1);
 
             expect(dataClient.get.mock.calls[0][0]).toEqual('/catalogs');
             expect(dataClient.get.mock.calls[1][0]).toContain('/categories');
@@ -21,6 +21,39 @@ describe('CategoriesService', () => {
             }
             expect(result.hasNext).toEqual(false);
             expect(result.total).toEqual(expectedLength); /* total and count the same due to pageSize */
+        });
+        it('returns the categories as list with keyword', async () => {
+            dataClient.get.mockResolvedValueOnce({ data: data.catalogsGet }).mockResolvedValue({ data: data.categoriesGet });
+
+            const query = 'Men';
+
+            const result = await service.categoriesGet(undefined, query, 'EN', 1);
+
+            const expectedLength = data.categoriesGet.data.filter((category) => category.name.default.toLowerCase().includes(query.toLowerCase())).length;
+
+            expect(dataClient.get.mock.calls[0][0]).toEqual('/catalogs');
+            expect(dataClient.get.mock.calls[1][0]).toContain('/categories');
+            expect(result.categories.length).toEqual(expectedLength);
+            expect(result.categories[0].label).toEqual('Mens');
+            expect(result.categories[1].label).toEqual('Womens');
+            expect(result.categories[2].label).toEqual('Mens');
+            expect(result.hasNext).toEqual(false);
+            expect(result.total).toEqual(expectedLength);
+        });
+        it('returns the categories as list with parentId and keyword', async () => {
+            dataClient.get.mockResolvedValueOnce({ data: data.catalogsGet }).mockResolvedValue({ data: data.categoriesGet });
+
+            const query = 'Cl';
+
+            const result = await service.categoriesGet('mens', query, 'EN', 1);
+
+            const expectedLength = 1;
+
+            expect(dataClient.get.mock.calls[0][0]).toEqual('/catalogs');
+            expect(dataClient.get.mock.calls[1][0]).toContain('/categories');
+            expect(result.categories[0].label).toEqual('Clothing');
+            expect(result.hasNext).toEqual(false);
+            expect(result.total).toEqual(expectedLength);
         });
     });
 
