@@ -7,15 +7,12 @@ const LOGGING_NAME = 'CategoriesService';
 
 const pageSize = 20;
 
-const mapCategoryData = (categoryData, lang) => {
-    return categoryData.map((category) => {
-        return {
-            id: category.id,
-            label: category.name?.[languageMap[lang]] ?? category.name?.default,
-            parentId: category.parent_category_id
-        };
-    });
-};
+const mapCategoryData = (categoryData, lang) =>
+    categoryData.filter(({ parent_category_id }) => parent_category_id).map((category) => ({
+        id: category.id,
+        label: category.name?.[languageMap[lang]] ?? category.name?.default,
+        parentId: category.parent_category_id
+    }));
 
 /**
  * This method recursively creates a nested tree structure for the given categories.
@@ -122,9 +119,9 @@ const categoriesGet = async (parentId, keyword, lang, page = 1) => {
 
     const mappedData = mapCategoryData(categoryData.data, lang);
     const tree = buildCategoryTree(mappedData, selfPaginate ? parentId : undefined);
-    
+
     let categories = flattenCategories(tree);
-    
+
     if (keyword) {
         categories = filterCategories(keyword, categories);
     }

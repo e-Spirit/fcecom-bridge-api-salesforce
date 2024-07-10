@@ -1,3 +1,8 @@
+## [2.5.1](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.0...v2.5.1) (2024-07-10)
+
+### Changes
+* Fixed an issue where including the root category in the X-Total header caused the calculated total number of categories to be returned one category larger than the list in the API response.
+
 ## [2.5.0](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.4.1...v2.5.0) (2024-06-20)
 
 ### Changes
