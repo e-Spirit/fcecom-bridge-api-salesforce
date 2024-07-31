@@ -44,7 +44,7 @@ function errorHandler(error) {
     } else {
         logger.logError(LOGGING_NAME, `↳ ${message}`);
     }
-    return Promise.reject({ error: true, data, status });
+    return Promise.reject({ error: true, data: data?.fault?.message ?? data, status });
 }
 
 let lastError;
