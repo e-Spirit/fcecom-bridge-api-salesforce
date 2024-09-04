@@ -1,3 +1,9 @@
+## [2.5.3](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.2...v2.5.3) (2024-09-04)
+
+### Changes
+* Fixed security vulnerabilities located in axios (CVE-2024-39338), braces (CVE-2024-4068) and micromatch (CVE-2024-4067) by updating the relevant dependencies.
+* Updated fcecom-bridge-commons to v2.4.0.
+
 ## [2.5.2](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.1...v2.5.2) (2024-07-31)
 
 ### Changes
