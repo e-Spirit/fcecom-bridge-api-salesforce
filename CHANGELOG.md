@@ -1,3 +1,8 @@
+## [2.5.4](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.3...v2.5.4) (2024-10-16)
+
+### Changes
+* Updated fcecom-bridge-commons to v2.4.1.
+
 ## [2.5.3](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.2...v2.5.3) (2024-09-04)
 
 ### Changes
