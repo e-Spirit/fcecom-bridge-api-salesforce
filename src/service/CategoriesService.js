@@ -8,11 +8,13 @@ const LOGGING_NAME = 'CategoriesService';
 const pageSize = 20;
 
 const mapCategoryData = (categoryData, lang) =>
-    categoryData.filter(({ parent_category_id }) => parent_category_id).map((category) => ({
-        id: category.id,
-        label: category.name?.[languageMap[lang]] ?? category.name?.default,
-        parentId: category.parent_category_id
-    }));
+    categoryData
+        .filter(({ parent_category_id }) => parent_category_id)
+        .map((category) => ({
+            id: category.id,
+            label: category.name?.[languageMap[lang]] ?? category.name?.default,
+            parentId: category.parent_category_id
+        }));
 
 /**
  * This method recursively creates a nested tree structure for the given categories.
@@ -99,8 +101,15 @@ const checkIfEmpty = (value) => {
  */
 const filterCategories = (keyword, categories) => {
     const query = keyword.toLowerCase();
-    return categories.filter(category => category.label?.toLowerCase().includes(query));
-}
+    return categories.filter((category) => category.label?.toLowerCase().includes(query));
+};
+
+/**
+ * Recursively counts the total number of categories in a category tree structure.
+ * @param {any[]} tree Category tree.
+ * @returns {number} Total count of all categories including nested children.
+ */
+const countCategories = (tree) => tree.reduce((count, { children = [] }) => count + 1 + countCategories(children), 0);
 
 /**
  * This method fetches all categories and returns them as a flat list structure.
@@ -161,7 +170,7 @@ const categoriesCategoryIdsGet = async (categoryIds, lang) => {
             };
         }) || [];
 
-    return { categories: data, responseStatus: status };
+    return { categories: data, responseStatus: status, total: data.length };
 };
 
 /**
@@ -179,7 +188,9 @@ const categoryTreeGet = async (parentId = 'root', lang) => {
 
     const categorytree = buildCategoryTree(categories, parentId);
 
-    return { categorytree };
+    const total = countCategories(categorytree);
+
+    return { categorytree, total };
 };
 
 module.exports = {

@@ -1,8 +1,8 @@
 module.exports.categoriesGet = {
-    count: 14,
+    count: 13,
     next: 'https://test.salesforce.com/s/-/dw/data/v22_10/catalogs/storefront-catalog-m-non-en/categories?start=0&count=14',
     start: 0,
-    total: 14,
+    total: 13,
     data: [
         {
             id: 'gift-certificates',

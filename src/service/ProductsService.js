@@ -85,7 +85,7 @@ const productsProductIdsGet = async (productIds, lang) => {
             };
         }) || [];
 
-    return { products };
+    return { products, total: products.length };
 };
 
 module.exports = {

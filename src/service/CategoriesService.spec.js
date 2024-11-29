@@ -77,6 +77,8 @@ describe('CategoriesService', () => {
 
             const result = await service.categoryTreeGet('root');
 
+            const expectedLength = data.categoriesGet.count - 1;
+
             expect(result.categorytree[0].id).toEqual('gift-certificates');
             expect(result.categorytree[1].id).toEqual('hidden');
             expect(result.categorytree[1].children[0].id).toEqual('sale');
@@ -84,6 +86,7 @@ describe('CategoriesService', () => {
             expect(result.categorytree[1].children[0].children[1].id).toEqual('sale-womens');
             expect(result.categorytree[1].children[0].children[0].children[0].id).toEqual('sale-mens-accessories');
             expect(result.categorytree[1].children[0].children[0].children[1].id).toEqual('sale-mens-clothing');
+            expect(result.total).toEqual(expectedLength);
         });
     });
 
