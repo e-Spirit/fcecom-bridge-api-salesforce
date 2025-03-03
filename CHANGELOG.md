@@ -1,3 +1,8 @@
+## [2.5.6](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.5...v2.5.6) (2025-03-03)
+
+### Changes
+* Updated old `contentpages` endpoints to `content` in the `README.md` file.
+
 ## [2.5.5](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.4...v2.5.5) (2024-11-29)
 
 ### Changes

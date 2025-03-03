@@ -28,9 +28,9 @@ Lean more about their API [here](https://documentation.b2c.commercecloud.salesfo
 ### Important Notice
 Due to OCAPI API restrictions, the following endpoints are not implemented in the bridge:
 
-- POST /contentpages
-- DELETE /contentpages/{contentId}
-- PUT /contentpages/{contentId}
+- POST /content
+- DELETE /content/{contentId}
+- PUT /content/{contentId}
 - GET /lookup-url
 - GET /storefront-url
 
