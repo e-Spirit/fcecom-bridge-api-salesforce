@@ -1,7 +1,7 @@
 {
   "name": "fcecom-bridge-api-salesforce",
   "description": "FirstSpirit Connect for E-Commerce - Salesforce",
-  "version": "2.5.6",
+  "version": "2.5.8",
   "private": true,
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "axios-oauth-client": "^2.2.0",
     "axios-token-interceptor": "^0.2.0",
     "dotenv": "^16.4.5",
-    "fcecom-bridge-commons": "^2.4.2"
+    "fcecom-bridge-commons": "^2.4.3"
   },
   "devDependencies": {
     "braces": "~> 3.0.3",

@@ -1,3 +1,9 @@
+## [2.5.8](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.6...v2.5.8) (2025-08-22)
+
+### Changes
+* Updated fcecom-bridge-commons to v2.4.3.
+* Added fix to return empty result when a request was executed without a query for the content report.
+
 ## [2.5.6](https://github.com/e-Spirit/fcecom-bridge-api-salesforce/compare/v2.5.5...v2.5.6) (2025-03-03)
 
 ### Changes
